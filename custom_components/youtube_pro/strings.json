@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "YouTube Pro Configuration",
+        "description": "Enter the path to your YouTube cookies.txt file.",
+        "data": {
+          "cookie_path": "Cookie File Path"
+        }
+      }
+    },
+    "error": {
+      "invalid_path": "The specified file path does not exist. Please check the path and try again."
+    },
+    "abort": {
+      "already_configured": "Device is already configured"
+    }
+  }
+}
