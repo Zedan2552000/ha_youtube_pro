@@ -2,13 +2,16 @@ from homeassistant.components.sensor import SensorEntity
 from .const import DOMAIN
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    """Set up YouTube Pro sensors based on a config entry."""
     coordinator = hass.data[DOMAIN][entry.entry_id]
     
     async_add_entities([
+        YouTubeProSensor(coordinator, "account_name", "YouTube Account", "mdi:account"),
         YouTubeProSensor(coordinator, "watching_now", "YouTube Watching", "mdi:youtube"),
         YouTubeProSensor(coordinator, "notifications_count", "YouTube Notifications", "mdi:bell"),
         YouTubeProSensor(coordinator, "live_now_count", "YouTube Live Channels", "mdi:access-point"),
+        YouTubeProSensor(coordinator, "watch_later_count", "YouTube Watch Later", "mdi:clock-time-four"),
+        YouTubeProSensor(coordinator, "subscriptions_count", "YouTube Subscriptions", "mdi:youtube-subscription"),
+        YouTubeProSensor(coordinator, "recent_history", "YouTube History", "mdi:history"),
     ], True)
 
 class YouTubeProSensor(SensorEntity):
@@ -17,7 +20,6 @@ class YouTubeProSensor(SensorEntity):
         self.data_key = data_key
         self._name = name
         self._icon = icon
-        # Give them unique IDs
         self._attr_unique_id = f"youtube_pro_{data_key}"
 
     @property
@@ -30,15 +32,19 @@ class YouTubeProSensor(SensorEntity):
 
     @property
     def state(self):
-        return self.coordinator.data.get(self.data_key)
+        val = self.coordinator.data.get(self.data_key)
+        if isinstance(val, list):
+            return len(val) if val else "Empty"
+        return val
 
     @property
     def extra_state_attributes(self):
+        attrs = {}
         if self.data_key == "live_now_count":
-            return {"live_channels": self.coordinator.data.get("live_channels", [])}
-        if self.data_key == "watching_now":
-            return {"account": self.coordinator.data.get("account_name", "Unknown")}
-        return {}
+            attrs["live_channels"] = self.coordinator.data.get("live_channels", [])
+        if self.data_key == "recent_history":
+            attrs["last_5_videos"] = self.coordinator.data.get("recent_history", [])
+        return attrs
 
     @property
     def should_poll(self):
