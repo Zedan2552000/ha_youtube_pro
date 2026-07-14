@@ -1,8 +1,10 @@
-﻿from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity
 from .const import DOMAIN
 
-async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
-    coordinator = hass.data[DOMAIN]
+async def async_setup_entry(hass, entry, async_add_entities):
+    """Set up YouTube Pro sensors based on a config entry."""
+    coordinator = hass.data[DOMAIN][entry.entry_id]
+    
     async_add_entities([
         YouTubeProSensor(coordinator, "watching_now", "YouTube Watching", "mdi:youtube"),
         YouTubeProSensor(coordinator, "notifications_count", "YouTube Notifications", "mdi:bell"),
@@ -15,6 +17,8 @@ class YouTubeProSensor(SensorEntity):
         self.data_key = data_key
         self._name = name
         self._icon = icon
+        # Give them unique IDs
+        self._attr_unique_id = f"youtube_pro_{data_key}"
 
     @property
     def name(self):
