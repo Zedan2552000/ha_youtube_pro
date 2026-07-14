@@ -1,0 +1,11 @@
+﻿{
+  "domain": "youtube_pro",
+  "name": "YouTube Pro (Innertube)",
+  "version": "1.0.0",
+  "documentation": "https://github.com/Zedan2552000/ha_youtube_pro",
+  "dependencies": [],
+  "codeowners": ["@zedan"],
+  "requirements": ["requests", "beautifulsoup4"],
+  "iot_class": "cloud_polling",
+  "config_flow": false
+}
